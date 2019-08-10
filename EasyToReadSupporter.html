@@ -6,7 +6,7 @@
 		<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
 		<!-- <script type="text/javascript" src="thread-master/src/thread.js"></script> -->
-		<script src="worker-dom-master/" nomodule defer></script>
+		<script src="https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.js" nomodule defer></script>
 		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/redmond/jquery-ui.css">
 		<script type="text/javascript">
 			let text = new Array();
@@ -83,7 +83,7 @@
 		<div id="textDisplay"></div>
 		<script type="module">
 			import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
-			upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
+			MainThread.upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
 		</script>
 	</body>
 </html>
