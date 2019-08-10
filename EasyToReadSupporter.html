@@ -5,12 +5,10 @@
 		<title>読書サポーター</title>
 		<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-		<!-- <script type="text/javascript" src="thread-master/src/thread.js"></script> -->
-		<script src="https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.js" nomodule defer></script>
 		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/redmond/jquery-ui.css">
 		<script type="text/javascript">
 			let text = new Array();
-			let b=1;
+			// let scroll = 500;
 
 			$(function () {
 				$('.Dialog').dialog({
@@ -32,6 +30,12 @@
 									if(char=="")text[i]="&emsp;";
 									i++;
 								}
+								let TText = new Array();
+								for (char of text) {
+									Array.prototype.push.apply(TText,splitByLength(char.split(/(?<=。|、|!|\?)(?!」|\)|>|}|]|\r\n)|(?<=!)(?!\?)|(?<=\?)(?!!)/),20));
+									// Array.prototype.push.apply(TText,char.split(/(?<=。|、|!|\?)(?!」)/));
+								}
+								text = JSON.parse(JSON.stringify(TText));
 								updateText(0);
 							}
 						}
@@ -44,7 +48,9 @@
 			}
 
 			function updateText(i) {
-				if(i="")i=0;
+				if(i=="")i=0;
+				// console.log(i);
+				if(i>=text.length-5)i=text.length-5;
 				let displayText = '<span class="1or5line">'+text[i+0]+'</span><br>'+
 													'<span class="2or4line">'+text[i+1]+'</span><br>'+
 													'<span class="3line">'+text[i+2]+'</span><br>'+
@@ -53,21 +59,91 @@
 				$('#textDisplay').html(displayText);
 				updateCSS();
 			}
+			let divFlg = false;
+			let i=0;
+			let intID;
 			function startScroll() {
-				document.addEventListener('DOMContentLoaded', function() {
-						MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
-
-				}, false);
-				import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
-				upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
-			}
-			function stopScroll() {
+				divFlg = !divFlg;
+				if (divFlg) {
+					scroll=parseInt($('#speedInput').val());
+					$('#scrollButton').text("停止");
+					updateText(++i);
+					// console.log(scroll);
+					intID = setInterval(function () {
+						updateText(++i);
+					},scroll);
+				}else {
+					$('#scrollButton').text("開始");
+					clearInterval(intID);
+				}
 			}
 			function updateCSS() {
 				$('.1or5line').css({'color':'lightgray','background-color':'black'});
 				$('.2or4line').css({'color':'gray','background-color':'lightgray'});
 				$('.3line,.2or4line,.1or5line').css({'width':'400px','display':'inline-block'});
 			}
+			function loadText() {
+				$('#loadName').val()
+			}
+			function saveText() {
+				sendData($('#settingText').val(),$('#saveName').val());
+			}
+			function splitByLength(array, length) {
+				let resultArrAll = [];
+				for (str of array) {
+					// console.log(str);
+					var resultArr = [];
+					if (length && length >= 1) {
+						var index = 0;
+						var start = index;
+						var end = start + length;
+						while (start < str.length) {
+							resultArr[index] = str.substring(start, end);
+							index++;
+							start = end;
+							end = start + length;
+						}
+						Array.prototype.push.apply(resultArrAll,resultArr);
+						// resultArrAll.push(resultArr);
+					}
+				}
+				// console.log(resultArrAll);
+				return resultArrAll;
+			}
+			function sendData(data,filename) {
+					var XHR = new XMLHttpRequest();
+					var urlEncodedData = "";
+					var urlEncodedDataPairs = [];
+					var name;
+
+					// data オブジェクトを、URL エンコードしたキーと値のペアの配列に変換します
+					for(name in data) {
+						urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+					}
+
+					// キーと値のペアをひとつの文字列に連結して、Web ブラウザのフォーム送信方式に
+					// 合うよう、エンコードされた空白をプラス記号に置き換えます。
+					urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
+
+					// データが正常に送信された場合に行うことを定義します
+					XHR.addEventListener('load', function(event) {
+						alert('Yeah! Data sent and response loaded.');
+					});
+
+					// エラーが発生した場合に行うことを定義します
+					XHR.addEventListener('error', function(event) {
+						alert('Oups! Something goes wrong.');
+					});
+
+					// リクエストをセットアップします
+					XHR.open('POST', 'https://t572wai.github.io/EasyToReadSupporter/data');
+
+					// フォームデータの POST リクエストを扱うために必要な HTTP ヘッダを追加します
+					XHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+					// 最後に、データを送信します
+			XHR.send(urlEncodedData);
+		}
 		</script>
 		<style>
 			.Dialog{
@@ -80,19 +156,15 @@
 		<button type="button" name="button" onclick="OpenTextDialog()">文章設定</button>
 		<div class="Dialog" id="textDialog">
 			テキスト設定<br>
+			<input type="text" value="ID" id="loadName"><button onclick="loadText();">読み込み</button><br>
+			<input type="text" value="ID" id="saveName"><button onclick="saveText();">読み込み</button>
 			<textarea id="settingText" rows="8" cols="80"></textarea>
 		</div>
-		<button type="button" name="button" onclick="startScroll()">開始</button>
-		<button type="button" name="button" onclick="stopScroll()">停止</button>
+		<button type="button" name="button" onclick="startScroll()" id="scrollButton">開始</button>
+		<input type="range" id="speedInput" value="500" step="1" min="200" max="1500" oninput="$('#speed').text(this.value);">
+		&ensp;速度:
+		<span id="speed">500</span>
+		<!-- <button type="button" name="button" onclick="stopScroll()">停止</button> -->
 		<div id="textDisplay"></div>
-		<script type="module">
-			import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
-			upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
-		</script>
-		<script nomodule async=false defer>
-		document.addEventListener('DOMContentLoaded', function() {
-				MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
-		}, false);
-	</script>
 	</body>
 </html>
