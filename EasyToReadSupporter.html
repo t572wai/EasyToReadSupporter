@@ -86,7 +86,7 @@
 				$('#loadName').val()
 			}
 			function saveText() {
-				sendData({$('#saveName').val():$('#settingText').val()});
+				// sendData({$('#saveName').val():$('#settingText').val()});
 			}
 			function splitByLength(array, length) {
 				let resultArrAll = [];
@@ -158,9 +158,11 @@
 			テキスト設定<br>
 			<input type="text" value="ID" id="loadName"><button onclick="loadText();">読み込み</button><br>
 			<form class="form" action="../data" method="post">
-				<input type="text" value="ID" id="saveName"><button onclick="saveText();">保存</button>
+				<input type="text" value="ID" id="saveName">
+				<input type="button" name="button" value="保存">
+				<textarea id="settingText" rows="8" cols="80"></textarea>
+				<!-- <button onclick="saveText();">保存</button> -->
 			</form>
-			<textarea id="settingText" rows="8" cols="80"></textarea>
 		</div>
 		<button type="button" name="button" onclick="startScroll()" id="scrollButton">開始</button>
 		<input type="range" id="speedInput" value="500" step="1" min="200" max="1500" oninput="$('#speed').text(this.value);">
