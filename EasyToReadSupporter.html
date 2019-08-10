@@ -84,5 +84,10 @@
 			import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
 			upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
 		</script>
+		<script nomodule async=false defer>
+		document.addEventListener('DOMContentLoaded', function() {
+				MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+		}, false);
+</script>
 	</body>
 </html>
