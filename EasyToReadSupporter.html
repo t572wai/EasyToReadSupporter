@@ -54,7 +54,12 @@
 				updateCSS();
 			}
 			function startScroll() {
-							upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
+				document.addEventListener('DOMContentLoaded', function() {
+						MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+
+				}, false);
+				import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
+				upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
 			}
 			function stopScroll() {
 			}
@@ -88,6 +93,6 @@
 		document.addEventListener('DOMContentLoaded', function() {
 				MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
 		}, false);
-</script>
+	</script>
 	</body>
 </html>
