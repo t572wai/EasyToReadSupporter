@@ -83,7 +83,7 @@
 		<div id="textDisplay"></div>
 		<script type="module">
 			import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
-			MainThread.upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
+			upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
 		</script>
 	</body>
 </html>
