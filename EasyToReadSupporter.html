@@ -86,7 +86,7 @@
 				$('#loadName').val()
 			}
 			function saveText() {
-				sendData($('#settingText').val(),$('#saveName').val());
+				sendData({$('#saveName').val():$('#settingText').val()});
 			}
 			function splitByLength(array, length) {
 				let resultArrAll = [];
@@ -110,7 +110,7 @@
 				// console.log(resultArrAll);
 				return resultArrAll;
 			}
-			function sendData(data,filename) {
+			function sendData(data) {
 					var XHR = new XMLHttpRequest();
 					var urlEncodedData = "";
 					var urlEncodedDataPairs = [];
@@ -157,7 +157,9 @@
 		<div class="Dialog" id="textDialog">
 			テキスト設定<br>
 			<input type="text" value="ID" id="loadName"><button onclick="loadText();">読み込み</button><br>
-			<input type="text" value="ID" id="saveName"><button onclick="saveText();">読み込み</button>
+			<form class="form" action="../data" method="post">
+				<input type="text" value="ID" id="saveName"><button onclick="saveText();">保存</button>
+			</form>
 			<textarea id="settingText" rows="8" cols="80"></textarea>
 		</div>
 		<button type="button" name="button" onclick="startScroll()" id="scrollButton">開始</button>
