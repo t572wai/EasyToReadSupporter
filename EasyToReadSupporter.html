@@ -5,11 +5,65 @@
 		<title>読書サポーター</title>
 		<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
-		<script src="clipboard.js-master/dist/clipboard.min.js"></script>
+		<!-- <script type="text/javascript" src="thread-master/src/thread.js"></script> -->
+		<script src="worker-dom-master/" nomodule defer></script>
 		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/redmond/jquery-ui.css">
 		<script type="text/javascript">
-			$('.Dialog')
+			let text = new Array();
+			let scroll = 1000;
+			let b=1;
+
+			$(function () {
+				$('.Dialog').dialog({
+					autoOpen: false
+				});
+				$('#textDialog').dialog({
+					title:"テキスト設定",
+					buttons:[
+						{
+							text: "決定",
+							click: function () {
+								console.log($('#settingText').val());
+								text = $('#settingText').val().split('\n');
+								while (text.length<5) {
+									text.push(" ");
+								}
+								let i=0;
+								for (char of text) {
+									if(char=="")text[i]="&emsp;";
+									i++;
+								}
+								updateText();
+							}
+						}
+					]
+				});
+			}
+		);
+			function OpenTextDialog() {
+				$('#textDialog').dialog('open');
+			}
+
+			function updateText(i) {
+				if(i="")i=0;
+				let displayText = '<span class="1or5line">'+text[i+0]+'</span><br>'+
+													'<span class="2or4line">'+text[i+1]+'</span><br>'+
+													'<span class="3line">'+text[i+2]+'</span><br>'+
+													'<span class="2or4line">'+text[i+3]+'</span><br>'+
+													'<span class="1or5line">'+text[i+4]+'</span>';
+				$('#textDisplay').html(displayText);
+				updateCSS();
+			}
+			function startScroll() {
+							upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
+			}
+			function stopScroll() {
+			}
+			function updateCSS() {
+				$('.1or5line').css({'color':'lightgray','background-color':'black'});
+				$('.2or4line').css({'color':'gray','background-color':'lightgray'});
+				$('.3line,.2or4line,.1or5line').css({'width':'400px','display':'inline-block'});
+			}
 		</script>
 		<style>
 			.Dialog{
@@ -17,10 +71,19 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body src="scroll.js" id="hello">
+		<h1>読書サポーター</h1>
 		<button type="button" name="button" onclick="OpenTextDialog()">文章設定</button>
 		<div class="Dialog" id="textDialog">
-			テキスト設定
+			テキスト設定<br>
+			<textarea id="settingText" rows="8" cols="80"></textarea>
 		</div>
+		<button type="button" name="button" onclick="startScroll()">開始</button>
+		<button type="button" name="button" onclick="stopScroll()">停止</button>
+		<div id="textDisplay"></div>
+		<script type="module">
+			import {upgradeElement} from 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/index.mjs';
+			upgradeElement(document.getElementById('hello'), 'https://unpkg.com/@ampproject/worker-dom@0.2.8/dist/unminified.worker.mjs');
+		</script>
 	</body>
 </html>
