@@ -41,17 +41,38 @@
 						}
 					]
 				});
-			}
-		);
-			function OpenTextDialog() {
-				$('#textDialog').dialog('open');
-			}
+				$('#upload_chat').on('change', function(){
+						return function(event){
+								var file = $(this).prop('files')[0];
+								var formData = new FormData();
+								formData.append('file', file);
 
-			function updateText(i) {
-				if(i=="")i=0;
-				// console.log(i);
-				if(i>=text.length-5)i=text.length-5;
-				let displayText = '<span class="1or5line">'+text[i+0]+'</span><br>'+
+								$.ajax('/upload' , {
+									type: 'POST',
+									contentType: false,
+									processData: false,
+									data: formData,
+									error: function() {
+										//アップロードエラー時の処理
+									},
+									success: function(res) {
+										//アップロード成功時の処理
+									}
+								});
+								return false;
+							}
+						});
+					}
+				);
+				function OpenTextDialog() {
+					$('#textDialog').dialog('open');
+				}
+
+				function updateText(i) {
+					if(i=="")i=0;
+					// console.log(i);
+					if(i>=text.length-5)i=text.length-5;
+					let displayText = '<span class="1or5line">'+text[i+0]+'</span><br>'+
 													'<span class="2or4line">'+text[i+1]+'</span><br>'+
 													'<span class="3line">'+text[i+2]+'</span><br>'+
 													'<span class="2or4line">'+text[i+3]+'</span><br>'+
@@ -86,6 +107,8 @@
 				$('#loadName').val()
 			}
 			function saveText() {
+				$('#upload_chat').click();
+				return false;
 			}
 			function splitByLength(array, length) {
 				let resultArrAll = [];
@@ -109,40 +132,6 @@
 				// console.log(resultArrAll);
 				return resultArrAll;
 			}
-			function sendData(data) {
-					var XHR = new XMLHttpRequest();
-					var urlEncodedData = "";
-					var urlEncodedDataPairs = [];
-					var name;
-
-					// data オブジェクトを、URL エンコードしたキーと値のペアの配列に変換します
-					for(name in data) {
-						urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
-					}
-
-					// キーと値のペアをひとつの文字列に連結して、Web ブラウザのフォーム送信方式に
-					// 合うよう、エンコードされた空白をプラス記号に置き換えます。
-					urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
-
-					// データが正常に送信された場合に行うことを定義します
-					XHR.addEventListener('load', function(event) {
-						alert('Yeah! Data sent and response loaded.');
-					});
-
-					// エラーが発生した場合に行うことを定義します
-					XHR.addEventListener('error', function(event) {
-						alert('Oups! Something goes wrong.');
-					});
-
-					// リクエストをセットアップします
-					XHR.open('POST', 'https://t572wai.github.io/EasyToReadSupporter/data');
-
-					// フォームデータの POST リクエストを扱うために必要な HTTP ヘッダを追加します
-					XHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-					// 最後に、データを送信します
-			XHR.send(urlEncodedData);
-		}
 		</script>
 		<style>
 			.Dialog{
@@ -156,9 +145,10 @@
 		<div class="Dialog" id="textDialog">
 			テキスト設定<br>
 			<input type="text" value="ID" id="loadName"><button onclick="loadText();">読み込み</button><br>
-			<form class="form" action="../data" method="post">
+			<form class="form" action="/data" method="post">
 				<input type="text" value="ID" id="saveName">
-				<input type="button" name="button" value="保存">
+				<input type="file" id="upload_chat" name="file" style="display:none"></input>
+				<input type="button" name="button" value="保存" onclick="saveText()">
 				<textarea id="settingText" rows="8" cols="80"></textarea>
 				<!-- <button onclick="saveText();">保存</button> -->
 			</form>
