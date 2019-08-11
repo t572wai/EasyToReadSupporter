@@ -36,7 +36,7 @@
 								{
 									text: "決定",
 									click: function () {
-										console.log($('#settingText').val());
+										// console.log($('#settingText').val());
 										text = $('#settingText').val().split('\n');
 										while (text.length<5) {
 											text.push("&emsp;");
@@ -48,7 +48,7 @@
 										}
 										let TText = new Array();
 										for (char of text) {
-											Array.prototype.push.apply(TText,splitByLength(char
+											aronAlpha(TText,splitByLength(char
 												.split(/(?<=。|、|!|\?)(?!」|\)|>|}|]|\r\n)|(?<=!)(?!\?)|(?<=\?)(?!!)/),12));
 											// Array.prototype.push.apply(TText,char.split(/(?<=。|、|!|\?)(?!」)/));
 										}
@@ -128,12 +128,19 @@
 							start = end;
 							end = start + length;
 						}
-						Array.prototype.push.apply(resultArrAll,resultArr);
+						aronAlpha(resultArrAll,resultArr);
 						// resultArrAll.push(resultArr);
 					}
 				}
 				// console.log(resultArrAll);
 				return resultArrAll;
+			}
+			function aronAlpha(array1,array2) {
+				let array = JSON.parse(JSON.stringify(array1));
+				for (a of array2) {
+					array.push(a);
+				}
+				return array;
 			}
 		</script>
 		<style>
