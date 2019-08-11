@@ -18,10 +18,12 @@
 						let index = 1+parseInt($('#scrollBar').val());
 						updateText(index);
 						$('#scrollBar').val(index);
+						ind=index;
 					}else if (e.keyCode==38) {
 						let index = parseInt($('#scrollBar').val())-1;
 						updateText(index);
 						$('#scrollBar').val(index);
+						ind=index;
 					}
 				});
 				$('.Dialog').dialog({
