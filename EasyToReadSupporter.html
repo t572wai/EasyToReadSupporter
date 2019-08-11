@@ -48,7 +48,7 @@
 										}
 										let TText = new Array();
 										for (char of text) {
-											aronAlpha(TText,splitByLength(char
+											TText = aronAlpha(TText,splitByLength(char
 												.split(/(?<=。|、|!|\?)(?!」|\)|>|}|]|\r\n)|(?<=!)(?!\?)|(?<=\?)(?!!)/),12));
 											// Array.prototype.push.apply(TText,char.split(/(?<=。|、|!|\?)(?!」)/));
 										}
@@ -128,7 +128,7 @@
 							start = end;
 							end = start + length;
 						}
-						aronAlpha(resultArrAll,resultArr);
+						resultArrAll=aronAlpha(resultArrAll,resultArr);
 						// resultArrAll.push(resultArr);
 					}
 				}
