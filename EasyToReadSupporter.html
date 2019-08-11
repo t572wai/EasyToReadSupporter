@@ -78,18 +78,19 @@
 				updateCSS();
 			}
 			let divFlg = false;
-			let i=0;
+			let ind=0;
 			let intID;
 			function startScroll() {
 				divFlg = !divFlg;
 				if (divFlg) {
 					scroll=parseInt($('#speedInput').val());
 					$('#scrollButton').text("停止");
-					updateText(++i);
+					updateText(++ind);
+					$('#scrollBar').val(ind);
 					// console.log(scroll);
 					intID = setInterval(function () {
-						updateText(++i);
-						$('#scrollBar').val(i);
+						updateText(++ind);
+						$('#scrollBar').val(ind);
 					},scroll);
 				}else {
 					$('#scrollButton').text("開始");
@@ -178,7 +179,7 @@
 		<!-- <button type="button" name="button" onclick="stopScroll()">停止</button> -->
 			<div id="main">
 				<div id="textDisplay"></div>
-				<input type="range" value="0" min="0" max="0" step="1" id="scrollBar" oninput="updateText(this.value)"/></div>
+				<input type="range" value="0" min="0" max="0" step="1" id="scrollBar" onchange=""="updateText(this.value);ind=parseInt(this.value)"/></div>
 			</div>
 	</body>
 </html>
