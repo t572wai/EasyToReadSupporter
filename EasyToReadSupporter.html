@@ -28,7 +28,7 @@
 				});
 				$('.Dialog').dialog({
 					autoOpen: false,
-					width: 850
+					width: 750
 				});
 				$('#textDialog').dialog({
 					title:"テキスト設定",
@@ -76,6 +76,8 @@
 													'<span class="3line">'+text[i+2]+'</span><br>'+
 													'<span class="2or4line">'+text[i+3]+'</span><br>'+
 													'<span class="1or5line">'+text[i+4]+'</span>';
+													// '<input type="range" value="0" min="0" max="0" step="1" id="scrollBar" onchange="updateText(this.value);ind=parseInt(this.value)"/>';
+
 				$('#textDisplay').html(displayText);
 				updateCSS();
 			}
@@ -102,8 +104,8 @@
 			function updateCSS() {
 				$('.1or5line').css({'color':'lightgray','background-color':'black'});
 				$('.2or4line').css({'color':'gray','background-color':'lightgray'});
-				$('.3line,.2or4line,.1or5line').css({'width':'800px','display':'inline-block'});
-				$('#scrollBar').attr('max',text.length-5);
+				$('.3line,.2or4line,.1or5line').css({'width':'700px','display':'inline-block'});
+				$('#scrollBar').attr({'max':text.length-5,'position':'absolute','right':'0'});
 			}
 			function loadText() {
 				$('#settingText').val(localStorage.getItem($('#Name').val()+'easyToReadSupporter'));
@@ -136,7 +138,7 @@
 		</script>
 		<style>
 			*{
-				font-size: 60px;
+				font-size: 50px;
 			}
 			[type="range"] {
 				height: 100px;
@@ -145,9 +147,8 @@
 				display: none;
 			}
 			#scrollBar{
-				position: relative;
-				bottom: 150px;
-
+				position: fixed;
+				right: -50px;
 				-webkit-transform:rotate(90deg);
 					 -moz-transform:rotate(90deg);
 						 -o-transform:rotate(90deg);
@@ -158,6 +159,7 @@
 			}
 			#textDisplay{
 				display: inline-block;
+				position: relative;
 			}
 			#main{
 			}
@@ -175,13 +177,14 @@
 				<textarea id="settingText" rows="4" cols="20"></textarea>
 		</div>
 		<button type="button" name="button" onclick="startScroll()" id="scrollButton">開始</button>
-		<input type="range" id="speedInput" value="500" step="10" min="200" max="1500" oninput="$('#speed').text(this.value);">
+		<input type="range" id="speedInput" value="500" step="10" min="200" max="990" oninput="$('#speed').text(this.value);">
 		&ensp;速度:
 		<span id="speed">500</span><br>
 		<!-- <button type="button" name="button" onclick="stopScroll()">停止</button> -->
 			<div id="main">
-				<div id="textDisplay"></div>
-				<input type="range" value="0" min="0" max="0" step="1" id="scrollBar" onchange=""="updateText(this.value);ind=parseInt(this.value)"/></div>
+				<div id="textDisplay">
+				</div>
+				<input type="range" value="0" min="0" max="0" step="1" id="scrollBar" oninput="updateText(this.value);ind=parseInt(this.value)"/></div>
 			</div>
 	</body>
 </html>
