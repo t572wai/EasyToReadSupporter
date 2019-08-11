@@ -7,60 +7,55 @@
 		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
 		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/redmond/jquery-ui.css">
 		<script type="text/javascript">
-			let text = new Array();
+			let text = ["&emsp;","&emsp;","&emsp;","&emsp;","&emsp;"];
 			// let scroll = 500;
 
 			$(function () {
+				updateText();
+				$(document).keydown(function (e) {
+					// console.log(e.keyCode);
+					if(e.keyCode==40){
+						let index = 1+parseInt($('#scrollBar').val());
+						updateText(index);
+						$('#scrollBar').val(index);
+					}else if (e.keyCode==38) {
+						let index = parseInt($('#scrollBar').val())-1;
+						updateText(index);
+						$('#scrollBar').val(index);
+					}
+				});
 				$('.Dialog').dialog({
-					autoOpen: false
+					autoOpen: false,
+					width: 850
 				});
 				$('#textDialog').dialog({
 					title:"テキスト設定",
 					buttons:[
-						{
-							text: "決定",
-							click: function () {
-								console.log($('#settingText').val());
-								text = $('#settingText').val().split('\n');
-								while (text.length<5) {
-									text.push(" ");
-								}
-								let i=0;
-								for (char of text) {
-									if(char=="")text[i]="&emsp;";
-									i++;
-								}
-								let TText = new Array();
-								for (char of text) {
-									Array.prototype.push.apply(TText,splitByLength(char.split(/(?<=。|、|!|\?)(?!」|\)|>|}|]|\r\n)|(?<=!)(?!\?)|(?<=\?)(?!!)/),20));
-									// Array.prototype.push.apply(TText,char.split(/(?<=。|、|!|\?)(?!」)/));
-								}
-								text = JSON.parse(JSON.stringify(TText));
-								updateText(0);
-							}
-						}
-					]
-				});
-				$('#upload_chat').on('change', function(){
-						return function(event){
-								var file = $(this).prop('files')[0];
-								var formData = new FormData();
-								formData.append('file', file);
-
-								$.ajax('/upload' , {
-									type: 'POST',
-									contentType: false,
-									processData: false,
-									data: formData,
-									error: function() {
-										//アップロードエラー時の処理
-									},
-									success: function(res) {
-										//アップロード成功時の処理
+								{
+									text: "決定",
+									click: function () {
+										console.log($('#settingText').val());
+										text = $('#settingText').val().split('\n');
+										while (text.length<5) {
+											text.push("&emsp;");
+										}
+										let i=0;
+										for (char of text) {
+											if(char=="")text[i]="&emsp;";
+											i++;
+										}
+										let TText = new Array();
+										for (char of text) {
+											Array.prototype.push.apply(TText,splitByLength(char
+												.split(/(?<=。|、|!|\?)(?!」|\)|>|}|]|\r\n)|(?<=!)(?!\?)|(?<=\?)(?!!)/),12));
+											// Array.prototype.push.apply(TText,char.split(/(?<=。|、|!|\?)(?!」)/));
+										}
+										text = JSON.parse(JSON.stringify(TText));
+										updateText(0);
+										$('#textDialog').dialog('close');
 									}
-								});
-								return false;
-							}
+								}
+							]
 						});
 					}
 				);
@@ -69,9 +64,11 @@
 				}
 
 				function updateText(i) {
-					if(i=="")i=0;
+					i=parseInt(i);
+					if(!Number.isInteger(i))i=0;
 					// console.log(i);
 					if(i>=text.length-5)i=text.length-5;
+					if(i<0)i=0;
 					let displayText = '<span class="1or5line">'+text[i+0]+'</span><br>'+
 													'<span class="2or4line">'+text[i+1]+'</span><br>'+
 													'<span class="3line">'+text[i+2]+'</span><br>'+
@@ -92,6 +89,7 @@
 					// console.log(scroll);
 					intID = setInterval(function () {
 						updateText(++i);
+						$('#scrollBar').val(i);
 					},scroll);
 				}else {
 					$('#scrollButton').text("開始");
@@ -101,14 +99,14 @@
 			function updateCSS() {
 				$('.1or5line').css({'color':'lightgray','background-color':'black'});
 				$('.2or4line').css({'color':'gray','background-color':'lightgray'});
-				$('.3line,.2or4line,.1or5line').css({'width':'400px','display':'inline-block'});
+				$('.3line,.2or4line,.1or5line').css({'width':'800px','display':'inline-block'});
+				$('#scrollBar').attr('max',text.length-5);
 			}
 			function loadText() {
-				$('#loadName').val()
+				$('#settingText').val(localStorage.getItem($('#Name').val()+'easyToReadSupporter'));
 			}
 			function saveText() {
-				$('#upload_chat').click();
-				return false;
+				localStorage.setItem($('#Name').val()+'easyToReadSupporter', $('#settingText').val());
 			}
 			function splitByLength(array, length) {
 				let resultArrAll = [];
@@ -134,8 +132,31 @@
 			}
 		</script>
 		<style>
+			*{
+				font-size: 60px;
+			}
+			[type="range"] {
+				height: 100px;
+			}
 			.Dialog{
 				display: none;
+			}
+			#scrollBar{
+				position: relative;
+				bottom: 150px;
+
+				-webkit-transform:rotate(90deg);
+					 -moz-transform:rotate(90deg);
+						 -o-transform:rotate(90deg);
+								transform:rotate(90deg);
+
+				width: 400px;
+				display: inline;
+			}
+			#textDisplay{
+				display: inline-block;
+			}
+			#main{
 			}
 		</style>
 	</head>
@@ -144,20 +165,20 @@
 		<button type="button" name="button" onclick="OpenTextDialog()">文章設定</button>
 		<div class="Dialog" id="textDialog">
 			テキスト設定<br>
-			<input type="text" value="ID" id="loadName"><button onclick="loadText();">読み込み</button><br>
-			<form class="form" action="/data" method="post">
-				<input type="text" value="ID" id="saveName">
-				<input type="file" id="upload_chat" name="file" style="display:none"></input>
-				<input type="button" name="button" value="保存" onclick="saveText()">
-				<textarea id="settingText" rows="8" cols="80"></textarea>
-				<!-- <button onclick="saveText();">保存</button> -->
-			</form>
+			<input type="text" value="ID" id="Name"><button onclick="loadText();">読み込み</button>
+				<!-- <input type="file" id="upload_chat" name="file" style="display:none"></input> -->
+				<!-- <input type="button" name="button" value="保存" onclick="saveText()"> -->
+				<button onclick="saveText();">保存</button>
+				<textarea id="settingText" rows="4" cols="20"></textarea>
 		</div>
 		<button type="button" name="button" onclick="startScroll()" id="scrollButton">開始</button>
-		<input type="range" id="speedInput" value="500" step="1" min="200" max="1500" oninput="$('#speed').text(this.value);">
+		<input type="range" id="speedInput" value="500" step="10" min="200" max="1500" oninput="$('#speed').text(this.value);">
 		&ensp;速度:
-		<span id="speed">500</span>
+		<span id="speed">500</span><br>
 		<!-- <button type="button" name="button" onclick="stopScroll()">停止</button> -->
-		<div id="textDisplay"></div>
+			<div id="main">
+				<div id="textDisplay"></div>
+				<input type="range" value="0" min="0" max="0" step="1" id="scrollBar" oninput="updateText(this.value)"/></div>
+			</div>
 	</body>
 </html>
